@@ -1,0 +1,79 @@
+html {
+  background-color:gray;
+  text-align:center;
+}
+
+.node_outer {
+  vertical-align:top;
+  text-align: center;
+  margin: 3px;
+  padding: 3px;
+  display: inline-block;
+}
+
+.node_inner {
+  vertical-align:center;
+  text-align: center;
+  background-color:white;
+  margin:10px;
+  padding: 10px;
+  border-radius:10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.19), 0 2px 2px rgba(0, 0, 0, 0.23);
+  transition: background-color 0.3s ease-in-out;
+}
+
+.connector_outer {
+  position:relative;
+  width:100%;
+  height:0;
+}
+
+.connector_inner {
+  height:26px;
+  width:4px;
+  margin:auto;
+  bottom:0;
+  background: black;
+  transform: translate(0px, -16px);
+}
+
+.readme {
+  text-align:left;
+  position: absolute;
+  left:4px;
+  top:4px;
+  max-width:25%;
+  background-color:white;
+  padding:15px;
+  margin:5px;
+  border-radius:10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.19), 0 2px 2px rgba(0, 0, 0, 0.23);
+}
+
+.prime_state_unresolved {
+  background-color:white;
+}
+
+.prime_state_prime {
+  background-color:#CCFFCC;
+}
+
+.prime_state_factorizable.breakable{
+  background-color:#FFAAAA;
+}
+
+.prime_state_factorizable.not_breakable{
+  background-color:white;
+}
+
+.prime_state_factorizable.breakable:hover{
+  background-color:#FF8888;
+}
+
+.breakable {
+  cursor: zoom-in;
+}
+
+form {
+  margin-bottom:10px;
+}

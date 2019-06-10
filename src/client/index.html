@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>asm-dom-cmake</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+  </head>
+  <body>
+    <div class="readme">
+      <a href="https://github.com/ArthurSonzogni/asm-dom-cmake">See source</a>
+      <p>
+        This is a <strong>client</strong>/<strong>server</strong> entierely
+        written in C++/WebAssembly.
+      </p>
+      <p>
+        The <strong>server</strong> runs on google cloud functions and exposes
+        functions to factorize integers and tests whether they are prime or not.
+      </p>
+      <p>The <strong>client</strong> uses a <a
+          href="https://github.com/mbasso/asm-dom">C++ virtual dom</a> to render
+        this tree.
+      </p>
+    </div>
+
+    <div id="root">
+      Waiting for asm-dom to replace this node.
+    </div>
+  </body>
+  <script src="asm-dom.js"></script>
+  <script src="client.js"></script>
+</html>

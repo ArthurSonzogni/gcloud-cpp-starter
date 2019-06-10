@@ -1,0 +1,6 @@
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
+const char* server_url = "${SERVER_URL}";
+
+#endif

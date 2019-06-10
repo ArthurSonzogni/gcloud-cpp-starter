@@ -3,8 +3,8 @@
 # the LICENSE file.
 
 # gccx target is completed whenever the "gccx" command is available.
-find_program(gccx-found gccx)
-if (NOT gccx-found)
+find_program(GCCX_FOUND gccx)
+if (NOT GCCX_FOUND)
   add_custom_target(gccx COMMAND npm install -g gccx)
 else()
   add_custom_target(gccx)

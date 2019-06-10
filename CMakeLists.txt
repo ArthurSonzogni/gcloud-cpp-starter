@@ -8,29 +8,18 @@ project(asm-dom-cmake
   VERSION 0.1.0
 )
 
+string(APPEND CMAKE_CXX_FLAGS " -s EXTRA_EXPORTED_RUNTIME_METHODS='UTF8ToString'")
+string(APPEND CMAKE_CXX_FLAGS " -s WASM=1")
 
-# If needed, in release mode, use emscripten optimizations flags.
-include(cmake/release-mode.cmake)
+add_subdirectory(third_party)
+add_subdirectory(src)
 
-# Install gccx if needed. Defines the gccx(..) function to transpile cpx to cpp.
-include(cmake/gccx.cmake)
-
-# Add the asm-dom library.
-include(cmake/asm-dom.cmake)
-
-gccx(src/main.cpx)
-add_executable(main src/main.cpp)
-set_property(TARGET main PROPERTY CXX_STANDARD 11)
-target_link_libraries(main PRIVATE asm-dom)
-
-# Copy the index.html file into the build directory
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/index.html
-  ${CMAKE_CURRENT_BINARY_DIR}/index.html
+add_custom_target(run
+  COMMAND google-chrome http://localhost:8888/index.html
+  COMMAND cd ${CMAKE_BINARY_DIR}/src/client/ && python -m SimpleHTTPServer 8888
+  DEPENDS client
 )
 
-# Copy the style.ss file into the build directory
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/style.css
-  ${CMAKE_CURRENT_BINARY_DIR}/style.css
-)
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+  string(APPEND CMAKE_CXX_FLAGS " -Os --js-opts 3 --llvm-lto 3 --llvm-opts 3 --closure 1")
+endif()

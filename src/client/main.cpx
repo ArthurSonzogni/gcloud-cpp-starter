@@ -1,0 +1,156 @@
+// Copyright 2019 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
+
+#include <emscripten/val.h>
+#include <functional>
+#include <string>
+#include <memory>
+#include "asm-dom.hpp"
+#include "client/fetch.hpp"
+#include "client/server.hpp"
+#include <nlohmann/json.hpp>
+
+void RenderView();
+asmdom::VNode* current_view = nullptr;
+
+// The link in between two Node, its parent and its children.
+asmdom::VNode* Connector() {
+  return 
+    <div class="connector_outer">
+      <div class="connector_inner">
+      </div>
+    </div>;
+}
+
+// The main element. Display a number. When the user clik on it. It gets broken
+// into two small ones.
+class Node {
+ public:
+  Node(int value) : value_(value) {
+    // Send a request to the server to know if |value_| is a prime number.
+    auto url = std::string(server_url) + "/is_prime/" + std::to_string(value_);
+    Fetch(url, [&](std::string response) {
+      prime_state_ = response == "true" ? Prime : Factorizable;
+      RenderView();
+    });
+  }
+
+  int value() const { return value_; }
+
+  asmdom::VNode* Render() {
+    asmdom::Children children;
+
+    if (left_)
+      children.push_back(left_->Render());
+    if (right_)
+      children.push_back(right_->Render());
+
+    auto break_number = [&](emscripten::val) {
+      Break();
+      return true;
+    };
+
+    // clang-format off
+    std::string node_inner_css = "node_inner";
+    switch(prime_state_) {
+      case Unresolved: node_inner_css += " prime_state_unresolved"; break;
+      case Prime: node_inner_css += " prime_state_prime"; break;
+      case Factorizable: node_inner_css += " prime_state_factorizable"; break;
+    }
+    // clang-format on
+    node_inner_css += Breakable() ? " breakable" : " not_breakable";
+
+    return
+      <div class = "node_outer">
+        { Connector() }
+        <div class={node_inner_css} (onclick) = {break_number}>
+          { std::to_string(value_) }
+        </div>
+        {... children}
+      </ div>;
+  }
+
+ private:
+  bool Breakable() { return !is_broken_ && prime_state_ == Factorizable; }
+
+  // Send a request to the server to know to decompose |value_| into a product
+  // of smaller numbers.
+  void Break() {
+    if (is_broken_ || prime_state_ != Factorizable)
+      return;
+    is_broken_ = true;
+    auto url =
+        std::string(server_url) + "/break_number/" + std::to_string(value_);
+    Fetch(url, [&](std::string response) {
+      auto json = nlohmann::json::parse(response);
+      int a = json[0];
+      int b = json[1];
+      left_ = std::make_unique<Node>(a);
+      right_ = std::make_unique<Node>(b);
+      RenderView();
+    });
+  }
+
+  int value_;
+  std::unique_ptr<Node> left_;
+  std::unique_ptr<Node> right_;
+
+  enum PrimeState {
+    Unresolved,
+    Prime,
+    Factorizable,
+  };
+
+  bool is_broken_ = false;
+
+  PrimeState prime_state_ = Unresolved;
+};
+
+std::unique_ptr<Node> root;
+
+// Render the view (i.e. replace the main virtual dom).
+void RenderView() {
+  auto oninput = [&](emscripten::val event) {
+    auto input = event["target"]["value"].as<std::string>();
+    int number = 0;
+    std::istringstream(input) >> number;
+    root = std::make_unique<Node>(number);
+    RenderView();
+    return true;
+  };
+
+  auto view =
+    <div>
+      <form>
+        <p> Number: </p>
+        <input (oninput)={oninput} [value]={root->value()}></input>
+      </form>
+      { root->Render() }
+    </div>;
+  asmdom::patch(current_view, view);
+  current_view = view;
+}
+
+int main() {
+
+  // Initialize asm-dom.
+  asmdom::Config config = asmdom::Config();
+  asmdom::init(config);
+
+  root = std::make_unique<Node>(1337);
+
+  // Replace <div id="root"/> by our virtual dom.
+  emscripten::val document = emscripten::val::global("document");
+  emscripten::val root =
+      document.call<emscripten::val>("getElementById", std::string("root"));
+  current_view = <div>Initial view</div>;
+  asmdom::patch(root, current_view);
+
+  // Update the virtual dom.
+  RenderView();
+
+  return 0;
+};
+
+// vim: filetype=cpp

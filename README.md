@@ -1,27 +1,31 @@
-# asm-dom-cmake
+# gcloud-cpp-starter
 
-Simple starter project: A web interface entirely built using C++ and cmake.
-
-This is possible thanks to [asm-dom](https://github.com/mbasso/asm-dom) and 
-[gccx](https://github.com/mbasso/gccx) (JSX like syntax for C++).
-
-* [Demo page](http://arthursonzogni.github.io/asm-dom-cmake/)
-* Use only CMake (no crazy Javascript tool, only C++ :heart:)
-* Self contained (cmake will download things for you)
+Start project with:
+ * C++ / WebAssembly client / server
+ * The client use a C++ virtual dom.
+ * The client runs on Google cloud functions.
+ * Entirely made with C++ / CMake. Not JavaScript.
+ * No dependencies. Simple CMake functions will fetch them if needed.
 
 # How to build?
 
-[![asciicast](https://asciinema.org/a/xLGp7D6nkqgCEZoSTM7LdO5QT.svg)](https://asciinema.org/a/xLGp7D6nkqgCEZoSTM7LdO5QT)
+[![asciicast](https://asciinema.org/a/guUjW9jwA27KDYJTCzjBxLXY2.svg)](https://asciinema.org/a/guUjW9jwA27KDYJTCzjBxLXY2)
 
-* Make sure cmake, emscripten and npm are installed.
+* Make sure cmake, emscripten and npm are installed and build:
 ~~~bash
 mkdir build
 cd build
 emcmake cmake ..
 make
+make run
 ~~~
 
-* Create a local server and navigate [http://localhost:8000](http://localhost:8000)
+* Deploy the server locally using the emulator:
 ~~~
-python -m SimpleHTTPServer 8000
+make deploy
+~~~
+
+* Serve the client locally and open it usint a web browser:
+~~~
+make run
 ~~~
