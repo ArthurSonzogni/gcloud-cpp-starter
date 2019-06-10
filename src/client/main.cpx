@@ -138,7 +138,7 @@ int main() {
   asmdom::Config config = asmdom::Config();
   asmdom::init(config);
 
-  root = std::make_unique<Node>(1337);
+  root = std::make_unique<Node>(777777);
 
   // Replace <div id="root"/> by our virtual dom.
   emscripten::val document = emscripten::val::global("document");
