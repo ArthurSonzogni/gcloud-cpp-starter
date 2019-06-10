@@ -3,6 +3,8 @@
 // the LICENSE file.
 
 server = require('./server.js')
+let initialized = false;
+server.onRuntimeInitialized = () => initialized = true;
 
 const methods = [
   'break_number',
@@ -11,6 +13,11 @@ const methods = [
 
 for (const method of methods) {
   exports[method] = function(req, res) {
+    if (!initialized) {
+      setTimeout( () => exports[method](req,res), 0.1);
+      return;
+    }
+
     let result = server.ccall( 'OnRequest', 'string',
                               ['string', 'string', 'string'],
                               [method  , req.path, req.body]);
