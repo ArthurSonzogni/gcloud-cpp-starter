@@ -7,6 +7,8 @@ Features:
  * Client uses a [C++ virtual dom](https://github.com/mbasso/asm-dom).
  * Server runs on [Google cloud functions](https://cloud.google.com/functions/docs/concepts/overview).
 
+Demo: [here](https://arthursonzogni.github.io/gcloud-cpp-starter/)
+
 # How to build?
 
 [![asciicast](https://asciinema.org/a/guUjW9jwA27KDYJTCzjBxLXY2.svg)](https://asciinema.org/a/guUjW9jwA27KDYJTCzjBxLXY2)
